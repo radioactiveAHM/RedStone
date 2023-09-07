@@ -1,3 +1,5 @@
+![icon](./icon/icon.png)
+
 # RedStone
 
 ## Local network file sharing written in pure rust with GUI

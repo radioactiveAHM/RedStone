@@ -1,6 +1,6 @@
 pub mod client;
-mod client_btn;
 pub mod server;
+mod client_btn;
 mod server_btn;
 
 use cursive::views::{Dialog, TextView};
@@ -15,7 +15,7 @@ async fn main() {
 
     siv.add_layer(
         Dialog::around(TextView::new("RedStone"))
-            .title("Choose mod")
+            .title("Choose mode")
             .button("Server", server_btn)
             .button("Client", client_btn),
     );
