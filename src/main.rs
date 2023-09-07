@@ -1,15 +1,25 @@
-mod client;
-mod server;
+pub mod client;
+mod client_btn;
+pub mod server;
+mod server_btn;
 
-use client::client;
-use server::server;
-use redstone::read;
+use cursive::views::{Dialog, TextView};
+
+use client_btn::client_btn;
+use server_btn::server_btn;
 
 #[tokio::main]
-async fn main(){
-    match read("Choose mod: Server(1), Client(2)").replace("\r\n", "").as_str() {
-        "1" => {server(read("Enter ip:port")).await},
-        "2" => {client(read("Enter ip:port")).await},
-        _ => {panic!("X")}
-    }
+async fn main() {
+    // Creates the cursive root
+    let mut siv = cursive::default();
+
+    siv.add_layer(
+        Dialog::around(TextView::new("RedStone"))
+            .title("Choose mod")
+            .button("Server", server_btn)
+            .button("Client", client_btn),
+    );
+
+    // Starts the event loop.
+    siv.run();
 }
