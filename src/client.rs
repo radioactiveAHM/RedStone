@@ -1,7 +1,9 @@
 use rfd::FileDialog;
-use tokio::fs::File;
-use tokio::io::{copy, AsyncWriteExt};
-use tokio::net::TcpStream;
+use tokio::{
+    fs::File,
+    io::{copy, AsyncWriteExt},
+    net::TcpStream,
+};
 
 pub async fn client(ip_port: String) {
     // Open FileDialog to pick the file
