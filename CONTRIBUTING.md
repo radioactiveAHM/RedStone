@@ -37,7 +37,7 @@ contributors to adhere to it in all interactions within the project's community.
 ## Questions and Support
 
 If you have any questions or need support while contributing, feel free to
-[open an issue](https://github.com/radioactiveAHM/RedStone/issues) or reach out to the
+[open an issue](../../issues) or reach out to the
 maintainers.
 
 Thank you for your contributions to RedStone! Your help is greatly appreciated.
