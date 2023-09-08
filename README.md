@@ -1,4 +1,6 @@
-![RedStone Icon](./img/icon.png)
+<div align="center">
+  <img src="./img/icon.png" alt="RedStone Icon" />
+</div>
 
 # RedStone: Local Network File Sharing in Pure Rust with GUI
 
