@@ -1,10 +1,12 @@
 use crate::server::server;
 use redstone::ipfinder;
 
-use cursive::align::HAlign;
-use cursive::traits::Scrollable;
-use cursive::view::Resizable;
-use cursive::views::{Dialog, SelectView, TextView};
+use cursive::{
+    align::HAlign,
+    traits::Scrollable,
+    view::Resizable,
+    views::{Dialog, SelectView, TextView},
+};
 
 pub fn server_btn(s: &mut cursive::Cursive) {
     // Clear layer

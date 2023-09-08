@@ -1,6 +1,4 @@
-use tokio::fs::File;
-use tokio::io::copy;
-use tokio::net::TcpListener;
+use tokio::{fs::File, io::copy, net::TcpListener};
 
 pub async fn server(ip_port: String) {
     // The w_mode determines whether the file is going to be created or written

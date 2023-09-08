@@ -1,6 +1,8 @@
 use crate::client::client;
-use cursive::view::Nameable;
-use cursive::views::{Dialog, TextArea};
+use cursive::{
+    view::Nameable,
+    views::{Dialog, TextArea},
+};
 
 pub fn client_btn(s: &mut cursive::Cursive) {
     // Clear layer

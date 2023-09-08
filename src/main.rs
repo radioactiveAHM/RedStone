@@ -1,6 +1,6 @@
 pub mod client;
-pub mod server;
 mod client_btn;
+pub mod server;
 mod server_btn;
 
 use cursive::views::{Dialog, TextView};
