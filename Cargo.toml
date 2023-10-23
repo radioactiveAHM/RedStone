@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 local-ip-address = "0.5.4"
-rfd = "0.11.4"
+rfd = "0.12.1"
 tokio = { version = "1", features = ["net", "fs", "io-util", "macros", "rt-multi-thread"] }
 crossterm = "0.27.0"
 
