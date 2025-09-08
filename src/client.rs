@@ -1,35 +1,82 @@
 use rfd::FileDialog;
-use tokio::{
-    fs::File,
-    io::{copy, AsyncWriteExt},
-    net::TcpStream,
-};
+use std::ffi::OsStr;
+use tokio::io::AsyncWrite;
+
+struct UdpWriter<'a> {
+    udp: &'a tokio::net::UdpSocket,
+}
+impl AsyncWrite for UdpWriter<'_> {
+    fn poll_write(
+        self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+        buf: &[u8],
+    ) -> std::task::Poll<Result<usize, std::io::Error>> {
+        self.udp.poll_send(cx, buf)
+    }
+    fn poll_flush(
+        self: std::pin::Pin<&mut Self>,
+        _cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Result<(), std::io::Error>> {
+        std::task::Poll::Ready(Ok(()))
+    }
+    fn poll_shutdown(
+        self: std::pin::Pin<&mut Self>,
+        _cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Result<(), std::io::Error>> {
+        std::task::Poll::Ready(Ok(()))
+    }
+}
 
 pub async fn client(ip_port: String) {
-    // Open FileDialog to pick the file
-    let file_path = FileDialog::new().set_directory("/").pick_file().unwrap();
+    // Prompt user to select a file
+    let file_path = FileDialog::new()
+        .set_directory("/")
+        .pick_file()
+        .expect("❌ No file selected");
 
-    // Open file as read only mode
-    let mut file = File::open(&file_path)
-        .await
-        .expect("Permission Denied, Try Administor");
-    // Create TCP connection
-    let mut tcp = TcpStream::connect(&ip_port.replace("\r\n", ""))
-        .await
-        .expect("Network Unavaliable");
+    println!("📁 Selected file: {:?}", file_path);
 
-    // Get file name
-    let file_name = std::path::Path::new(&file_path);
-    // Send file name to create empty file
-    tcp.write_all(file_name.file_name().unwrap().to_str().unwrap().as_bytes())
+    // Open the selected file
+    let mut file = tokio::fs::File::open(&file_path)
         .await
-        .unwrap();
-    tcp.flush().await.unwrap();
-    tcp.shutdown().await.unwrap();
+        .unwrap_or_else(|e| panic!("❌ Failed to open file {:?}: {}", file_path, e));
 
-    // Write to file
-    let mut tcp = TcpStream::connect(&ip_port.replace("\r\n", ""))
+    // Bind to a local UDP socket
+    let udp = tokio::net::UdpSocket::bind("0.0.0.0:0")
         .await
-        .expect("Network Unavaliable");
-    copy(&mut file, &mut tcp).await.unwrap();
+        .unwrap_or_else(|e| panic!("❌ Failed to bind local UDP socket: {}", e));
+
+    // Connect to the server
+    udp.connect(ip_port.trim()).await.unwrap_or_else(|e| {
+        panic!(
+            "❌ Failed to connect to server at {}: {}",
+            ip_port.trim(),
+            e
+        )
+    });
+
+    println!("🔗 Connected to server at {}", ip_port.trim());
+
+    // Send the filename to the server
+    let filename = file_path
+        .file_name()
+        .unwrap_or(OsStr::new("noname"))
+        .as_encoded_bytes();
+
+    udp.send(filename)
+        .await
+        .unwrap_or_else(|e| panic!("❌ Failed to send filename: {}", e));
+
+    println!(
+        "📨 Sent filename: {:?}",
+        std::str::from_utf8(filename).unwrap_or("noname")
+    );
+
+    // Send the file content
+    tokio::io::copy(&mut file, &mut UdpWriter { udp: &udp })
+        .await
+        .unwrap_or_else(|e| panic!("❌ Failed to send file content: {}", e));
+    println!("✅ File content sent successfully");
+
+    let _ = udp.send(&[]).await;
 }

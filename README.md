@@ -2,7 +2,7 @@
   <img src="./img/icon.png" alt="RedStone Icon" />
 </div>
 
-# RedStone: Local Network File Sharing in Pure Rust with GUI
+# RedStone: Local UDP Network File Sharing in Pure Rust with GUI
 
 RedStone is a user-friendly application designed for local network file sharing, developed entirely in the Rust programming language. It provides a simple and intuitive interface for both server and client operations.
 
@@ -22,8 +22,9 @@ To use RedStone as a client to retrieve shared files, follow these instructions:
 1. Open the RedStone application.
 2. Select the `Client` option.
 3. Enter the server's IP address and port in the format IP:Port, and then click "Connect."
-4. Choose the file you wish to download.
+4. Choose the file you wish to upload.
 5. Wait for the upload process to complete.
+6. Select another file to upload or close the app.
 
 ## Screenshots
 
